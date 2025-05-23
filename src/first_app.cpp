@@ -1,6 +1,6 @@
 #include "first_app.hpp"
 
-#include "keyboard_movement_controller.hpp"
+#include "movement_controller.hpp"
 #include "de_buffer.hpp"
 #include "de_camera.hpp"
 #include "systems/point_light_system.hpp"
