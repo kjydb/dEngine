@@ -2,16 +2,32 @@
 
 // std
 #include <limits>
+#include <iostream>
 
 namespace de {
+
+int KeyboardMovementController::windowWidth = 0;
+int KeyboardMovementController::windowHeight = 0;
+double KeyboardMovementController::xpos = 0;
+double KeyboardMovementController::ypos = 0;
+double KeyboardMovementController::lastXpos = 0;
+double KeyboardMovementController::lastYpos = 0;
+double KeyboardMovementController::dx = 0;
+double KeyboardMovementController::dy = 0;
+bool KeyboardMovementController::rightMousePressed = false;
+
+float KeyboardMovementController::sensitivity = 0.05f;
 
 void KeyboardMovementController::moveInPlaneXZ(
     GLFWwindow* window, float dt, DeGameObject& gameObject) {
   glm::vec3 rotate{ 0 };
-  if (glfwGetKey(window, keys.lookRight) == GLFW_PRESS) rotate.y += 1.f;
-  if (glfwGetKey(window, keys.lookLeft) == GLFW_PRESS) rotate.y -= 1.f;
-  if (glfwGetKey(window, keys.lookUp) == GLFW_PRESS) rotate.x += 1.f;
-  if (glfwGetKey(window, keys.lookDown) == GLFW_PRESS) rotate.x -= 1.f;
+
+  lookAround(window);
+
+  if (rightMousePressed) {
+    rotate.x += sensitivity * dy;
+    rotate.y += sensitivity * dx;
+  }
 
   if (glm::dot(rotate, rotate) > std::numeric_limits<float>::epsilon()) {
     gameObject.transform.rotation += lookSpeed * dt * glm::normalize(rotate);
@@ -37,6 +53,39 @@ void KeyboardMovementController::moveInPlaneXZ(
   if (glm::dot(moveDir, moveDir) > std::numeric_limits<float>::epsilon()) {
     gameObject.transform.translation += moveSpeed * dt * glm::normalize(moveDir);
   }
+}
+
+void KeyboardMovementController::addMousePosCallback(GLFWwindow* window) {
+  glfwSetCursorPosCallback(window, mousePosCallback);
+}
+
+void KeyboardMovementController::addMouseButtonCallback(GLFWwindow* window) {
+  glfwSetMouseButtonCallback(window, mouseButtonCallback);
+}
+
+void KeyboardMovementController::mousePosCallback(GLFWwindow* window, double xpos, double ypos) {
+
+}
+
+void KeyboardMovementController::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
+  if (button == GLFW_MOUSE_BUTTON_RIGHT) {
+    if (action == GLFW_PRESS) {
+      rightMousePressed = true;
+    } else {
+      rightMousePressed = false;
+    }
+  }
+}
+
+// Press right mouse button to look around
+void KeyboardMovementController::lookAround(GLFWwindow* window) {
+  glfwGetCursorPos(window, &xpos, &ypos);
+  if (rightMousePressed) {
+    dx = lastXpos - xpos;
+    dy = ypos - lastYpos;
+  }
+  lastXpos = xpos;
+  lastYpos = ypos;
 }
 
 }  // namespace de

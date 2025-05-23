@@ -17,6 +17,7 @@
 #include <cassert>
 #include <chrono>
 #include <stdexcept>
+#include <iostream>
 
 namespace de {
 
@@ -69,6 +70,8 @@ void FirstApp::run() {
   auto viewerObject = DeGameObject::createGameObject();
   viewerObject.transform.translation.z = -2.5f;
   KeyboardMovementController cameraController{};
+
+  cameraController.addMouseButtonCallback(deWindow.getGLFWwindow());
 
   auto currentTime = std::chrono::high_resolution_clock::now();
   while (!deWindow.shouldClose()) {
