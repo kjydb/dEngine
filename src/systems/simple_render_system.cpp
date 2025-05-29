@@ -10,6 +10,7 @@
 #include <array>
 #include <cassert>
 #include <stdexcept>
+#include <iostream>
 
 namespace de {
 
@@ -76,6 +77,7 @@ void SimpleRenderSystem::renderGameObjects(FrameInfo& frameInfo) {
   for (auto& kv : frameInfo.gameObjects) {
     auto& obj = kv.second;
     if (obj.model == nullptr) continue;
+    DeGameObject::step(&obj, frameInfo.frameTime);
     SimplePushConstantData push{};
     push.modelMatrix = obj.transform.mat4();
     push.normalMatrix = obj.transform.normalMatrix();
