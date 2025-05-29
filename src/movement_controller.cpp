@@ -30,7 +30,7 @@ void KeyboardMovementController::moveInPlaneXZ(
   }
 
   if (glm::dot(rotate, rotate) > std::numeric_limits<float>::epsilon()) {
-    gameObject.transform.rotation += lookSpeed * dt * glm::normalize(rotate);
+    gameObject.transform.rotation += lookSpeed * dt * rotate;
   }
 
   // limit pitch values between about +/- 85ish degrees
@@ -77,12 +77,12 @@ void KeyboardMovementController::mouseButtonCallback(GLFWwindow* window, int but
   }
 }
 
-// Press right mouse button to look around
+// Press right mouse button and drag to look around
 void KeyboardMovementController::lookAround(GLFWwindow* window) {
   glfwGetCursorPos(window, &xpos, &ypos);
   if (rightMousePressed) {
-    dx = lastXpos - xpos;
-    dy = ypos - lastYpos;
+    dx = xpos - lastXpos;
+    dy = lastYpos - ypos;
   }
   lastXpos = xpos;
   lastYpos = ypos;
