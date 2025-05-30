@@ -17,7 +17,6 @@
 #include <cassert>
 #include <chrono>
 #include <stdexcept>
-#include <iostream>
 
 namespace de {
 
@@ -68,7 +67,7 @@ void FirstApp::run() {
   DeCamera camera{};
 
   auto viewerObject = DeGameObject::createGameObject();
-  viewerObject.transform.translation.z = -2.5f;
+  viewerObject.physics.translation.z = -2.5f;
   KeyboardMovementController cameraController{};
 
   cameraController.addMouseButtonCallback(deWindow.getGLFWwindow());
@@ -83,7 +82,7 @@ void FirstApp::run() {
     currentTime = newTime;
 
     cameraController.moveInPlaneXZ(deWindow.getGLFWwindow(), frameTime, viewerObject);
-    camera.setViewYXZ(viewerObject.transform.translation, viewerObject.transform.rotation);
+    camera.setViewYXZ(viewerObject.physics.translation, viewerObject.physics.rotation);
 
     float aspect = deRenderer.getAspectRatio();
     camera.setPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 100.f);
@@ -127,22 +126,22 @@ void FirstApp::loadGameObjects() {
     DeModel::createModelFromFile(deDevice, "models/flat_vase.obj");
   auto flatVase = DeGameObject::createGameObject();
   flatVase.model = deModel;
-  flatVase.transform.translation = { -.5f, .5f, 0.f };
-  flatVase.transform.scale = { 3.f, 1.5f, 3.f };
+  flatVase.physics.translation = { -.5f, .5f, 0.f };
+  flatVase.physics.scale = { 3.f, 1.5f, 3.f };
   gameObjects.emplace(flatVase.getId(), std::move(flatVase));
 
   deModel = DeModel::createModelFromFile(deDevice, "models/smooth_vase.obj");
   auto smoothVase = DeGameObject::createGameObject();
   smoothVase.model = deModel;
-  smoothVase.transform.translation = { .5f, .5f, 0.f };
-  smoothVase.transform.scale = { 3.f, 1.5f, 3.f };
+  smoothVase.physics.translation = { .5f, .5f, 0.f };
+  smoothVase.physics.scale = { 3.f, 1.5f, 3.f };
   gameObjects.emplace(smoothVase.getId(), std::move(smoothVase));
 
   deModel = DeModel::createModelFromFile(deDevice, "models/quad.obj");
   auto floor = DeGameObject::createGameObject();
   floor.model = deModel;
-  floor.transform.translation = { 0.f, .5f, 0.f };
-  floor.transform.scale = { 3.f, 1.f, 3.f };
+  floor.physics.translation = { 0.f, .5f, 0.f };
+  floor.physics.scale = { 3.f, 1.f, 3.f };
   gameObjects.emplace(floor.getId(), std::move(floor));
 
   std::vector<glm::vec3> lightColors{
@@ -161,7 +160,7 @@ void FirstApp::loadGameObjects() {
       glm::mat4(1.f), 
       (i * glm::two_pi<float>()) / lightColors.size(), 
       {0.f, -1.f, 0.f});
-    pointLight.transform.translation = glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f));
+    pointLight.physics.translation = glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f));
     gameObjects.emplace(pointLight.getId(), std::move(pointLight));
   }
 }

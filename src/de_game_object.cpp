@@ -3,7 +3,7 @@
 
 namespace de {
 
-glm::mat4 TransformComponent::mat4() {
+glm::mat4 PhysicsComponent::mat4() {
   const float c3 = glm::cos(rotation.z);
   const float s3 = glm::sin(rotation.z);
   const float c2 = glm::cos(rotation.x);
@@ -32,7 +32,7 @@ glm::mat4 TransformComponent::mat4() {
     {translation.x, translation.y, translation.z, 1.0f}};
 }
 
-glm::mat3 TransformComponent::normalMatrix() {
+glm::mat3 PhysicsComponent::normalMatrix() {
   const float c3 = glm::cos(rotation.z);
   const float s3 = glm::sin(rotation.z);
   const float c2 = glm::cos(rotation.x);
@@ -63,18 +63,18 @@ glm::mat3 TransformComponent::normalMatrix() {
 DeGameObject DeGameObject::makePointLight(float intensity, float radius, glm::vec3 color) {
   DeGameObject gameObj = DeGameObject::createGameObject();
   gameObj.color = color;
-  gameObj.transform.scale.x = radius;
+  gameObj.physics.scale.x = radius;
   gameObj.pointLight = std::make_unique<PointLightComponent>();
   gameObj.pointLight->lightIntensity = intensity;
   return gameObj;
 }
 
 void DeGameObject::step(DeGameObject* object, float dt) {
-  object->transform.force += object->transform.mass * object->d_gravity;
-  object->transform.velocity += object->transform.force / object->transform.mass * dt;
-  object->transform.translation += object->transform.velocity * dt;
+  object->physics.force += object->physics.mass * object->d_gravity;
+  object->physics.velocity += object->physics.force / object->physics.mass * dt;
+  object->physics.translation += object->physics.velocity * dt;
 
-  object->transform.force = glm::vec3(0, 0, 0);
+  object->physics.force = glm::vec3(0, 0, 0);
 }
 
 }  // namespace de

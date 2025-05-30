@@ -16,8 +16,6 @@ double KeyboardMovementController::dx = 0;
 double KeyboardMovementController::dy = 0;
 bool KeyboardMovementController::rightMousePressed = false;
 
-float KeyboardMovementController::sensitivity = 0.05f;
-
 void KeyboardMovementController::moveInPlaneXZ(
     GLFWwindow* window, float dt, DeGameObject& gameObject) {
   glm::vec3 rotate{ 0 };
@@ -25,19 +23,19 @@ void KeyboardMovementController::moveInPlaneXZ(
   lookAround(window);
 
   if (rightMousePressed) {
-    rotate.x += sensitivity * dy;
-    rotate.y += sensitivity * dx;
+    rotate.x += dy;
+    rotate.y += dx;
   }
 
   if (glm::dot(rotate, rotate) > std::numeric_limits<float>::epsilon()) {
-    gameObject.transform.rotation += lookSpeed * dt * rotate;
+    gameObject.physics.rotation += sensitivity * dt * rotate;
   }
 
   // limit pitch values between about +/- 85ish degrees
-  gameObject.transform.rotation.x = glm::clamp(gameObject.transform.rotation.x, -1.5f, 1.5f);
-  gameObject.transform.rotation.y = glm::mod(gameObject.transform.rotation.y, glm::two_pi<float>());
+  gameObject.physics.rotation.x = glm::clamp(gameObject.physics.rotation.x, -1.5f, 1.5f);
+  gameObject.physics.rotation.y = glm::mod(gameObject.physics.rotation.y, glm::two_pi<float>());
 
-  float yaw = gameObject.transform.rotation.y;
+  float yaw = gameObject.physics.rotation.y;
   const glm::vec3 forwardDir{sin(yaw), 0.f, cos(yaw)};
   const glm::vec3 rightDir{forwardDir.z, 0.f, -forwardDir.x};
   const glm::vec3 upDir{0.f, -1.f, 0.f};
@@ -51,7 +49,7 @@ void KeyboardMovementController::moveInPlaneXZ(
   if (glfwGetKey(window, keys.moveDown) == GLFW_PRESS) moveDir -= upDir;
 
   if (glm::dot(moveDir, moveDir) > std::numeric_limits<float>::epsilon()) {
-    gameObject.transform.translation += moveSpeed * dt * glm::normalize(moveDir);
+    gameObject.physics.translation += moveSpeed * dt * glm::normalize(moveDir);
   }
 }
 

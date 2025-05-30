@@ -78,10 +78,10 @@ void PointLightSystem::update(FrameInfo& frameInfo, GlobalUbo& ubo) {
     assert(lightIndex < MAX_LIGHTS && "Point lights exceed maximum specified");
 
     // update light position
-    obj.transform.translation = glm::vec3(rotateLight * glm::vec4(obj.transform.translation, 1.f));
+    obj.physics.translation = glm::vec3(rotateLight * glm::vec4(obj.physics.translation, 1.f));
 
     // copy light to ubo
-    ubo.pointLights[lightIndex].position = glm::vec4(obj.transform.translation, 1.f);
+    ubo.pointLights[lightIndex].position = glm::vec4(obj.physics.translation, 1.f);
     ubo.pointLights[lightIndex].color = glm::vec4(obj.color, obj.pointLight->lightIntensity);
 
     lightIndex += 1;
@@ -97,7 +97,7 @@ void PointLightSystem::render(FrameInfo& frameInfo) {
     if (obj.pointLight == nullptr) continue;
 
     // calculate distance
-    auto offset = frameInfo.camera.getPosition() - obj.transform.translation;
+    auto offset = frameInfo.camera.getPosition() - obj.physics.translation;
     float disSquared = glm::dot(offset, offset);
     sorted[disSquared] = obj.getId();
   }
@@ -120,9 +120,9 @@ void PointLightSystem::render(FrameInfo& frameInfo) {
     auto& obj = frameInfo.gameObjects.at(it->second);
 
     PointLightPushConstants push{};
-    push.position = glm::vec4(obj.transform.translation, 1.f);
+    push.position = glm::vec4(obj.physics.translation, 1.f);
     push.color = glm::vec4(obj.color, obj.pointLight->lightIntensity);
-    push.radius = obj.transform.scale.x;
+    push.radius = obj.physics.scale.x;
 
     vkCmdPushConstants(
       frameInfo.commandBuffer, 

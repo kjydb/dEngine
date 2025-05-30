@@ -79,8 +79,8 @@ void SimpleRenderSystem::renderGameObjects(FrameInfo& frameInfo) {
     if (obj.model == nullptr) continue;
     DeGameObject::step(&obj, frameInfo.frameTime);
     SimplePushConstantData push{};
-    push.modelMatrix = obj.transform.mat4();
-    push.normalMatrix = obj.transform.normalMatrix();
+    push.modelMatrix = obj.physics.mat4();
+    push.normalMatrix = obj.physics.normalMatrix();
 
     vkCmdPushConstants(
       frameInfo.commandBuffer, 

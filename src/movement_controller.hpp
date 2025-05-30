@@ -26,7 +26,7 @@ class KeyboardMovementController {
 
     KeyMappings keys{};
     float moveSpeed{3.f};
-    float lookSpeed{1.5f};
+    float sensitivity{0.075f};
 
   private:
     static void mousePosCallback( GLFWwindow* window, double xpos, double ypos);
@@ -42,8 +42,6 @@ class KeyboardMovementController {
     static double dx;
     static double dy;
     static bool rightMousePressed;
-
-    static float sensitivity;
 };
 
 }  // namespace de

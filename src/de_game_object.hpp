@@ -10,7 +10,7 @@
 #include <unordered_map>
 
 namespace de {
-struct TransformComponent {
+struct PhysicsComponent {
   glm::vec3 translation{};
   glm::vec3 scale{1.f, 1.f, 1.f};
   glm::vec3 rotation{};
@@ -60,7 +60,7 @@ class DeGameObject {
     id_t getId() { return id; }
 
     glm::vec3 color{};
-    TransformComponent transform{};
+    PhysicsComponent physics{};
 
     // Optional pointer components
     std::shared_ptr<DeModel> model{};
@@ -74,4 +74,4 @@ class DeGameObject {
     id_t id;
 };
 
-}
+}  // namespace de
