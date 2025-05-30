@@ -1,0 +1,4 @@
+- add kinematic and rigid body type
+- add collision
+- move all physics related components to physics directory
+- 
