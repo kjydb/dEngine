@@ -30,3 +30,45 @@
 *.exe
 *.out
 *.app
+
+.vscode/
+*.code-workspace
+
+.DS_Store         # macOS
+Thumbs.db         # Windows
+desktop.ini       # Windows
+
+build/
+out/
+bin/
+lib/
+dist/
+obj/
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.dylib
+*.a
+*.lib
+
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+compile_commands.json
+
+.ninja_deps
+.ninja_log
+build.ninja
+rules.ninja
+
+.idea/
+cmake-build-*/
+
+*.log
+*.tmp
+*.bak
+*.swp
+*~
