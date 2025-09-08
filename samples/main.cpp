@@ -163,7 +163,7 @@ int main() {
 
   objects.bodies[1].type = RIGIDBODY_TYPE_BOX;
   objects.bodies[1].position = glm::vec3(-1.0f, 5.0f, 3.0f);
-  objects.bodies[1].orientation = glm::vec3(0.0f, 0.0f, 30.0f);
+  objects.bodies[1].orientation = glm::vec3(0.0f, 0.0f, glm::pi<float>() / 6);
   objects.bodies[1].box.size = glm::vec3(0.5f, 0.5f, 0.5f);
 
   objects.bodies[2].type = RIGIDBODY_TYPE_BOX;

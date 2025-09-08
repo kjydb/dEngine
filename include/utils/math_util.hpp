@@ -11,8 +11,6 @@ inline float MagnitudeSq(const glm::vec3& v) {
 }
 
 inline glm::mat3 XRotation3x3(float angle) {
-  // TODO: Check if sinf, cosf are radians or degrees.
-  angle = glm::radians(angle);
   return glm::mat3(
     1.0f, 0.0f, 0.0f,
     0.0f, cosf(angle), sinf(angle),
@@ -21,7 +19,6 @@ inline glm::mat3 XRotation3x3(float angle) {
 }
 
 inline glm::mat3 YRotation3x3(float angle) {
-  angle = glm::radians(angle);
   return glm::mat3(
     cosf(angle), 0.0f, -sinf(angle),
     0.0f, 1.0f, 0.0f,
@@ -30,7 +27,6 @@ inline glm::mat3 YRotation3x3(float angle) {
 }
 
 inline glm::mat3 ZRotation3x3(float angle) {
-  angle = glm::radians(angle);
   return glm::mat3(
     cosf(angle), sinf(angle), 0.0f,
     -sinf(angle), cosf(angle), 0.0f,
