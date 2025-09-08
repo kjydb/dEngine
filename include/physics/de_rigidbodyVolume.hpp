@@ -5,7 +5,6 @@
 #include "physics/de_geometry.hpp"
 #include "physics/de_rigidbody.hpp"
 
-// #define GRAVITY_CONST glm::vec3(0.0f, -9.81f, 0.0f)
 #define GRAVITY_CONST glm::vec3(0.0f, -9.81f, 0.0f)
 
 class DeRigidbodyVolume : public DeRigidbody {
@@ -38,7 +37,7 @@ class DeRigidbodyVolume : public DeRigidbody {
     virtual void Update(float dt);
     // virtual void Render();
 
-    inline float InvMass() { return mass == 0.0f ? 0.0f : 1.0f / mass; }  // 0.0f is infinite mass.
+    inline float InvMass() { return mass == 0.0f ? 0.0f : 1.0f / mass; }  // 0.0f is infinite mass, kinematic object.
     glm::mat4 InvTensor();
 
     virtual void AddLinearImpulse(const glm::vec3& impulse);
@@ -61,7 +60,10 @@ class DeRigidbodyVolume : public DeRigidbody {
       float friction;
     #endif
 
-    OBB box;  // 이거 두개 뭐임? 바운딩박스? 타입에따라서 하나만 가지고있으면 되는거 아님?
+    // DeRigidbodyVolume.orientation: axis-angle, degrees.
+    // DeRigidbodyVolume.box.orientation: rotation matrix, radians.
+    // Maybe just make them into single unit.
+    OBB box;
     Sphere sphere;
 };
 

@@ -26,20 +26,6 @@ void DeRenderSystem::initPrimRender() {
   glBindVertexArray(0);
 }
 
-// void DeRenderSystem::Render(std::vector<DeRigidbodyVolume> bodies, DeCamera camera, float aspect) {
-//   glm::mat4 view = camera.GetViewMatrix();
-//   glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), aspect, 0.1f, 100.0f);
-
-//   for (int i = 0, size = bodies.size(); i < size; ++i) {
-//     if (bodies[i].type == RIGIDBODY_TYPE_SPHERE) {
-//       Render(bodies[i].sphere, view, projection);
-//     }
-//     else if (bodies[i].type == RIGIDBODY_TYPE_BOX) {
-//       Render(bodies[i].box, view, projection);
-//     }
-//   }
-// }
-
 void DeRenderSystem::Render(Objects objects, DeCamera camera, float aspect) {
   glm::mat4 view = camera.GetViewMatrix();
   glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), aspect, 0.1f, 100.0f);
@@ -63,7 +49,15 @@ void DeRenderSystem::Render(const Sphere& sphere, glm::mat4 view, glm::mat4 proj
 }
 
 void DeRenderSystem::Render(const OBB& obb, glm::mat4 view, glm::mat4 projection) {
-  glm::mat4 cubeModel = glm::scale(glm::translate(glm::mat4(1.0f), obb.position), obb.size);
+  // TODO: Optimize this.
+  glm::mat4 rotMat = glm::mat4(
+    glm::vec4(obb.orientation[0], 0.0f),
+    glm::vec4(obb.orientation[1], 0.0f),
+    glm::vec4(obb.orientation[2], 0.0f),
+    glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)
+  );
+  glm::mat4 cubeModel = glm::translate(glm::mat4(1.0f), obb.position) * rotMat * glm::scale(glm::mat4(1.0f), obb.size);
+
   glm::mat4 mvp = projection * view * cubeModel;
 
   glUseProgram(prim_cubeProg);

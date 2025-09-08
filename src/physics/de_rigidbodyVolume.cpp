@@ -11,7 +11,7 @@ void DeRigidbodyVolume::SyncCollisionVolumes() {
   sphere.position = position;
   box.position = position;
 
-  box.orientation = Rotation3x3(glm::radians(orientation.x), glm::radians(orientation.y), glm::radians(orientation.z));
+  box.orientation = Rotation3x3(orientation.x, orientation.y, orientation.z);
 }
 
 void DeRigidbodyVolume::Update(float dt) {
@@ -76,8 +76,6 @@ glm::mat4 DeRigidbodyVolume::InvTensor() {
     iz = (x2 + y2) * mass * fraction;
     iw = 1.0f;
   }
-
-	// printf("InvTensor(): ( %f, %f, %f, %f )\n", ix, iy, iz, iw);
 
   return glm::inverse(glm::mat4(
     ix, 0.0f, 0.0f, 0.0f,
