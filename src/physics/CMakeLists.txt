@@ -3,6 +3,7 @@ project(physics LANGUAGES CXX)
 set(PHYSICS_SOURCE_FILES
     de_cloth.cpp
     de_geometry.cpp
+    de_particle.cpp
     de_physicsSystem.cpp
     de_rigidbodyVolume.cpp)
 
