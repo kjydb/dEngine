@@ -72,6 +72,30 @@ typedef struct Interval {
   float max;
 } Interval;
 
+typedef struct Frustum {
+  Plane planes[6];  // order: top, bottom, left, right, near, far
+
+  inline Frustum() { }
+} Frustum;
+
+typedef struct RaycastResult {
+  glm::vec3 point;
+  glm::vec3 normal;
+  float t;
+  bool hit;
+} RaycastResult;
+
+void ResetRaycastResult(RaycastResult* outResult);
+
+float Length(const Line& line);
+float LengthSq(const Line& line);
+Ray FromPoints(const Point& from, const Point& to);
+glm::vec3 GetMin(const AABB& aabb);
+glm::vec3 GetMax(const AABB& aabb);
+AABB FromMinMax(const glm::vec3& min, glm::vec3& max);
+float PlaneEquation(const Point& point, const Plane& plane);
+float PlaneEquation(const Plane& plane, const Point& point);
+
 bool PointInOBB(const Point& point, const OBB& obb);
 
 Point ClosestPoint(const Sphere& sphere, const Point& point);
@@ -103,6 +127,23 @@ bool AABBPlane(const AABB& aabb, const Plane& plane);
 bool OBBOBB(const OBB& obb1, const OBB& obb2);
 bool OBBPlane(const OBB& obb, const Plane& plane);
 bool PlanePlane(const Plane& plane1, const Plane& plane2);
+
+bool Raycast(const Sphere& sphere, const Ray& ray, RaycastResult* outResult);
+bool Raycast(const AABB& aabb, const Ray& ray, RaycastResult& outResult);
+bool Raycast(const OBB& obb, const Ray& ray, RaycastResult* outResult);
+bool Raycast(const Plane& plane, const Ray& ray, RaycastResult* outResult);
+// bool Raycast(const Triangle& triangle, const Ray& ray, RaycastReuslt* outResult);
+
+bool Linetest(const Sphere& sphere, const Line& line);
+bool Linetest(const AABB& aabb, const Line& line);
+bool Linetest(const OBB& obb, const Line& line);
+bool Linetest(const Plane& plane, const Line& line);
+// bool Linetest(const Triangle& triangle, const Line& line);
+
+bool Linetest(const Line& line, const Sphere& sphere);
+bool Linetest(const Line& line, const AABB& aabb);
+bool Linetest(const Line& line, const OBB& obb);
+bool Linetest(const Line& line, const Plane& plane);
 
 typedef struct CollisionManifold {
   bool colliding;

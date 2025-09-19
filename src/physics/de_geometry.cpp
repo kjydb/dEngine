@@ -3,6 +3,23 @@
 #include "physics/de_geometry.hpp"
 #include "utils/math_util.hpp"
 
+float Length(const Line& line) {
+  return Magnitude(line.start - line.end);
+}
+
+float LengthSq(const Line& line) {
+  return MagnitudeSq(line.start - line.end);
+}
+
+void ResetRaycastResult(RaycastResult* outResult) {
+  if (outResult != 0) {
+    outResult->t = -1;
+    outResult->hit = false;
+    outResult->normal = glm::vec3(0.0f, 0.0f, 1.0f);
+    outResult->point = glm::vec3(0.0f, 0.0f, 0.0f);
+  }
+}
+
 bool PointInOBB(const Point& point, const OBB& obb) {
   glm::vec3 dir = point - obb.position;
 
@@ -81,6 +98,105 @@ bool SphereSphere(const Sphere& s1, const Sphere& s2) {
   float radiiSum = s1.radius + s2.radius;
   float sqDistance = MagnitudeSq(s1.position - s2.position);
   return sqDistance < radiiSum * radiiSum;
+}
+
+bool Raycast(const OBB& obb, const Ray& ray, RaycastResult* outResult) {
+  ResetRaycastResult(outResult);
+
+  glm::vec3 p = obb.position - ray.origin;
+
+  glm::vec3 X(obb.orientation[0][0], obb.orientation[0][1], obb.orientation[0][2]);
+  glm::vec3 Y(obb.orientation[1][0], obb.orientation[1][1], obb.orientation[1][2]);
+  glm::vec3 Z(obb.orientation[2][0], obb.orientation[2][1], obb.orientation[2][2]);
+
+  glm::vec3 f(
+    glm::dot(X, ray.direction),
+    glm::dot(Y, ray.direction),
+    glm::dot(Z, ray.direction)
+  );
+
+  glm::vec3 e(
+    glm::dot(X, p),
+    glm::dot(Y, p),
+    glm::dot(Z, p)
+  );
+
+  #if 1
+    float t[6] = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+    for (int i = 0; i < 3; ++i) {
+      if (CMP(f[i], 0)) {
+        if (-e[i] - obb.size[i] > 0 || -e[i] + obb.size[i] < 0) {
+          return false;
+        }
+        f[i] = 0.00001f;  // Avoid division by 0
+      }
+
+      t[i * 2 + 0] = (e[i] + obb.size[i]) / f[i];  // tmin[x, y, z]
+      t[i * 2 + 1] = (e[i] - obb.size[i]) / f[i];  // tmax[x, y, z]
+    }
+
+    float tmin = fmaxf(fmaxf(fminf(t[0], t[1]), fminf(t[2], t[3])), fminf(t[4], t[5]));
+    float tmax = fminf(fminf(fmaxf(t[0], t[1]), fmaxf(t[2], t[3])), fmaxf(t[4], t[5]));
+
+  #else
+
+  #endif
+
+  // if tmax < 0, ray is intersecting AABB
+  // but entire AABB is behind it's origin
+  if (tmax < 0) {
+    return false;
+  }
+
+  // if tmin > tmax, ray doesn't intersect AABB
+  if (tmin > tmax) {
+    return false;
+  }
+
+  // if tmin < 0, tmax is closer
+  float t_result = tmin;
+
+  if (tmin < 0.0f) {
+    t_result = tmax;
+  }
+
+  if (outResult != 0) {
+    outResult->hit = true;
+    outResult->t = t_result;
+    outResult->point = ray.origin + ray.direction * t_result;
+
+    glm::vec3 normals[] = {
+      X,
+      X * -1.0f,
+      Y,
+      Y * -1.0f,
+      Z,
+      Z * -1.0f
+    };
+
+    for (int i = 0; i < 6; ++i) {
+      if (CMP(t_result, t[i])) {
+        outResult->normal = glm::normalize(normals[i]);
+      }
+    }
+  }
+  return true;
+}
+
+bool Linetest(const OBB& obb, const Line& line) {
+  if (MagnitudeSq(line.end - line.start) < 0.0000001f) {
+    return PointInOBB(line.start, obb);
+  }
+  Ray ray;
+  ray.origin = line.start;
+  ray.direction = glm::normalize(line.end - line.start);
+  RaycastResult result;
+  if (!Raycast(obb, ray, &result)) {
+    return false;
+  }
+  float t = result.t;
+
+  return t >= 0 && t * t <= LengthSq(line);
 }
 
 void ResetCollisionManifold(CollisionManifold* result) {
