@@ -1,7 +1,5 @@
 #pragma once
 
-#include "glm/glm.hpp"
-
 #include "physics/de_geometry.hpp"
 #include "physics/de_rigidbody.hpp"
 

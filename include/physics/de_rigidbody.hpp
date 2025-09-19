@@ -2,6 +2,8 @@
 
 #include <vector>
 
+#include "glm/glm.hpp"
+
 #include "physics/de_geometry.hpp"
 
 #define RIGIDBODY_TYPE_BASE     0
@@ -22,6 +24,7 @@ class DeRigidbody {
     virtual inline void SolveConstraints(const std::vector<OBB> &constraints) { }
 
     int type;
+    glm::vec3 color = { 255.0f, 255.0f, 255.0f };
   
   inline bool HasVolume() {
     return type == RIGIDBODY_TYPE_SPHERE || type == RIGIDBODY_TYPE_BOX;
