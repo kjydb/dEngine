@@ -17,11 +17,12 @@
 #include "graphics/de_reference.hpp"
 #include "graphics/de_renderSystem.hpp"
 #include "graphics/de_skybox.hpp"
+#include "utils/shader_util.hpp"
 
 #include "physics/de_physicsSystem.hpp"
 #include "physics/de_rigidbodyVolume.hpp"
 
-#include "utils/shader_util.hpp"
+#include "demos.hpp"
 
 namespace {
   GLFWwindow* mainWindow = nullptr;
@@ -35,7 +36,7 @@ namespace {
   // Physics
   DePhysicsSystem physicsSystem;
 
-  Objects objects;
+  DemoBase demo;
 
   float currentTime = 0.0f;
   float dt = 0.0f;
@@ -149,32 +150,7 @@ int main() {
   // init gizmo
   reference.initAxisGizmo();
 
-  // init physics scene
-  physicsSystem.ClearRigidbodies();
-  physicsSystem.ClearConstraints();
-
-  objects.bodies.clear();
-  objects.bodies.resize(3);
-
-  objects.bodies[0].type = RIGIDBODY_TYPE_BOX;
-  objects.bodies[0].position = glm::vec3(0.0f, -3.0f, 3.0f);
-  objects.bodies[0].box.size = glm::vec3(3.0f, 0.5f, 3.0f);
-  objects.bodies[0].mass = 0.0f;
-
-  objects.bodies[1].type = RIGIDBODY_TYPE_BOX;
-  objects.bodies[1].position = glm::vec3(-1.0f, 5.0f, 3.0f);
-  objects.bodies[1].orientation = glm::vec3(0.0f, 0.0f, glm::pi<float>() / 6);
-  objects.bodies[1].box.size = glm::vec3(0.5f, 0.5f, 0.5f);
-
-  objects.bodies[2].type = RIGIDBODY_TYPE_BOX;
-  objects.bodies[2].position = glm::vec3(1.0f, 5.0f, 3.0f);
-  objects.bodies[2].orientation = glm::vec3(0.0f, 0.0f, 0.0f);
-  objects.bodies[2].box.size = glm::vec3(0.5f, 0.5f, 0.5f);
-
-  for (int i = 0; i < objects.bodies.size(); ++i) {
-    objects.bodies[i].SyncCollisionVolumes();
-    physicsSystem.AddRigidbody(&objects.bodies[i]);
-  }
+  demo.Initialize();
 
   // main loop
   while (!glfwWindowShouldClose(mainWindow)) {
@@ -213,17 +189,10 @@ int main() {
     DrawText(5, 95, buffer);
 
     // physics
-    physicsSystem.Update(dt);
-    // for (int i = 0, size = objects.bodies.size(); i < size; ++i) {
-    //   if (i == 1) {
-    //     printf("[%d] position: { %f, %f, %f }\n", i, objects.bodies[i].position[0], objects.bodies[i].position[1], objects.bodies[i].position[2]);
-    //     printf("[%d] velocity: { %f, %f, %f }\n", i, objects.bodies[i].velocity[0], objects.bodies[i].velocity[1], objects.bodies[i].velocity[2]);
-    //     printf("[%d] orientation: { %f, %f, %f }\n", i, objects.bodies[i].orientation[0], objects.bodies[i].orientation[1], objects.bodies[i].orientation[2]);
-    //     printf("[%d] angVel: { %f, %f, %f }\n", i, objects.bodies[i].angVel[0], objects.bodies[i].angVel[1], objects.bodies[i].angVel[2]);
-    //     printf("[%d] forces: { %f, %f, %f }\n", i, objects.bodies[i].forces[0], objects.bodies[i].forces[1], objects.bodies[i].forces[2]);
-    //     printf("[%d] torques: { %f, %f, %f }\n\n", i, objects.bodies[i].torques[0], objects.bodies[i].torques[1], objects.bodies[i].torques[2]);
-    //   }
-    // }
+    demo.Update(dt);
+
+    // Render prims
+    renderSystem.Render(demo.objects, camera, aspect);
 
     // camera operation.
     camera.lookAround(mainWindow, dt);
@@ -235,19 +204,12 @@ int main() {
     // skybox
     skybox.updateSkybox(camera, aspect);
 
-    // Render prims
-    renderSystem.Render(objects, camera, aspect);
-
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     glfwSwapBuffers(mainWindow);
     glfwPollEvents();
   }
-
-  ImGui_ImplOpenGL3_Shutdown();
-  ImGui_ImplGlfw_Shutdown();
-  ImGui::DestroyContext();
 
   glfwDestroyWindow(mainWindow);
   glfwTerminate();

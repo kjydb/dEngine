@@ -1,8 +1,8 @@
 project(src LANGUAGES CXX)
 
 set(MAIN_ENTRY_POINT
-    cubeprim_test.hpp
-    cubeprim_test.cpp
+    demos.hpp
+    demos.cpp
     main.cpp)
 
 FetchContent_Declare(
